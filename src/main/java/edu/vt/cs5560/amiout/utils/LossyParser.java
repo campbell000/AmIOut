@@ -1,6 +1,7 @@
 package edu.vt.cs5560.amiout.utils;
 
 import edu.vt.cs5560.amiout.domain.NERCRegion;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -8,6 +9,8 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class LossyParser
 {
@@ -53,7 +56,7 @@ public class LossyParser
         String s = getVal(row, col);
         try
         {
-            return Integer.parseInt(s);
+            return Integer.parseInt(s.replaceAll(",", ""));
         }
         catch(Exception e)
         {
@@ -62,17 +65,22 @@ public class LossyParser
         }
     }
 
-    public static NERCRegion getNerc(Row row, int col)
+    public static List<NERCRegion> getNerc(Row row, int col)
     {
         String s = getVal(row, col);
+        List<NERCRegion> nercs = new LinkedList<>();
         try
         {
-            return NERCRegion.valueOf(s);
+            for (String str : s.split("[,/ ]"))
+            {
+                nercs.add(NERCRegion.getValue(StringUtils.trim(str)));
+            }
         }
         catch(Exception e)
         {
             System.err.println("Error parsing Nerc from "+s);
             return null;
         }
+        return nercs;
     }
 }

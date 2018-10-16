@@ -1,15 +1,13 @@
 package edu.vt.cs5560.amiout.data.DOE.order;
 
-import edu.vt.cs5560.amiout.data.DOE.DOEField;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class DOE2018FieldOrder implements DOEFieldOrder {
+public class DOE2002FieldOrder implements DOEFieldOrder {
     @Override
     public int getDateOccurredCol() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -19,56 +17,63 @@ public class DOE2018FieldOrder implements DOEFieldOrder {
 
     @Override
     public int getDateRestoredCol() {
-        return 3;
-    }
-
-    @Override
-    public int getTimeRestoredCol() {
-        return 4;
-    }
-
-    @Override
-    public int getAreaAffectedCol() {
-        return 5;
-    }
-
-    @Override
-    public int getNercRegionCol() {
-        return 6;
-    }
-
-    @Override
-    public int getDescCol() {
         return 7;
     }
 
     @Override
+    public int getTimeRestoredCol() {
+        return 7;
+    }
+
+    @Override
+    public int getAreaAffectedCol() {
+        return 3;
+    }
+
+    @Override
+    public int getNercRegionCol() {
+        return 1;
+    }
+
+    @Override
+    public int getDescCol() {
+        return -1;
+    }
+
+    @Override
     public int getEventTypeCol() {
-        return 8;
+        return 4;
     }
 
     @Override
     public int getLossCol() {
-        return 9;
+        return 5;
     }
 
     @Override
     public int getNumAffectedCol() {
-        return 10;
+        return 6;
     }
 
     @Override
     public DateFormat getDateFormat() {
-        return new SimpleDateFormat("MM/dd/yyyy h:mm a", Locale.US);
-    }
-
-    @Override
-    public DateFormat dateFormatForFileDetection() {
-        return new SimpleDateFormat("MM/dd/yyyy");
+        return new SimpleDateFormat("MM/dd/yy h:mm");
     }
 
     public DateFormat getTimeFormat()
     {
-        return new SimpleDateFormat("h:mm a", Locale.US);
+        return new SimpleDateFormat("h:mm", Locale.US);
     }
+
+    public DateFormat getAltDateFormat1() { return new SimpleDateFormat("MM/dd/yy hh:mm");}
+
+    public DateFormat getAltDateFormat2() { return new SimpleDateFormat("dd-MMM");}
+
+    public DateFormat get2003RestoredDateFormat() { return new SimpleDateFormat("MM/dd/yy h:mm a", Locale.US );}
+
+    @Override
+    public DateFormat dateFormatForFileDetection() {
+        return new SimpleDateFormat("MM/dd/yy");
+    }
+
 }

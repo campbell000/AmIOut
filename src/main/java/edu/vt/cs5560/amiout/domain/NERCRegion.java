@@ -5,10 +5,28 @@ public enum NERCRegion
     WECC,
     MRO,
     FRCC,
-    NPCC,
     RF,
     SERC,
     RE,
-    TRE
+    TRE,
+    MAAC,
+    SPP,
+    WSCC,
+    MAIN,
+    NPCC,
+    ECAR,
+    RFC,
+    SPP_RE,
+    REC,
+    PR,
+    ERCOT,
+    HI,
+    MECO,
+    HECO,
+    NPPC;
 
+    public static NERCRegion getValue(String v)
+    {
+        return NERCRegion.valueOf(v);
+    }
 }

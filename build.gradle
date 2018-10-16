@@ -36,5 +36,7 @@ dependencies {
 	compile 'org.jsoup:jsoup:1.11.3'
 	compile group: 'commons-io', name: 'commons-io', version: '2.4'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+	// https://mvnrepository.com/artifact/net.sf.supercsv/super-csv
+	compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
 
 }

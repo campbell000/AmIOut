@@ -2,43 +2,22 @@ package edu.vt.cs5560.amiout.domain;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 
 public class OutageSample
 {
-    private Date date;
-    private NERCRegion nercRegion;
-    private Time time;
+    private int id;
+    private String source;
+
+    private Date dateTimeOcurred;
+    private List nercRegion;
     private String areaAffected;
     private String disturbanceType;
     private Integer energyLossInMegaWatts;
     private Integer numCustomersAffected;
-    private Date restorationDate;
+    private Date restorationDateTime;
 
     private Time restorationTime;
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public NERCRegion getNercRegion() {
-        return nercRegion;
-    }
-
-    public void setNercRegion(NERCRegion nercRegion) {
-        this.nercRegion = nercRegion;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
-    }
 
     public String getAreaAffected() {
         return areaAffected;
@@ -72,39 +51,48 @@ public class OutageSample
         this.numCustomersAffected = numCustomersAffected;
     }
 
-    public Date getRestorationDate() {
-        return restorationDate;
-    }
-
-    public void setRestorationDate(Date restorationDate) {
-        this.restorationDate = restorationDate;
-    }
-
-    public Time getRestorationTime() {
-        return restorationTime;
-    }
-
-    public void setRestorationTime(Time restorationTime) {
-        this.restorationTime = restorationTime;
-    }
-
-    @Override
-    public String toString() {
-        return "OutageSample{" +
-                "date=" + date +
-                ", nercRegion=" + nercRegion +
-                ", time=" + time +
-                ", areaAffected='" + areaAffected + '\'' +
-                ", disturbanceType='" + disturbanceType + '\'' +
-                ", energyLossInMegaWatts=" + energyLossInMegaWatts +
-                ", numCustomersAffected=" + numCustomersAffected +
-                ", restorationDate=" + restorationDate +
-                ", restorationTime=" + restorationTime +
-                '}';
-    }
-
     public boolean sampleIsUsable()
     {
-        return this.getDate() != null;
+        return this.getDateTimeOcurred() != null;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getDateTimeOcurred() {
+        return dateTimeOcurred;
+    }
+
+    public void setDateTimeOcurred(Date dateTimeOcurred) {
+        this.dateTimeOcurred = dateTimeOcurred;
+    }
+
+    public Date getRestorationDateTime() {
+        return restorationDateTime;
+    }
+
+    public void setRestorationDateTime(Date restorationDateTime) {
+        this.restorationDateTime = restorationDateTime;
+    }
+
+    public List getNercRegion() {
+        return nercRegion;
+    }
+
+    public void setNercRegion(List nercRegion) {
+        this.nercRegion = nercRegion;
     }
 }

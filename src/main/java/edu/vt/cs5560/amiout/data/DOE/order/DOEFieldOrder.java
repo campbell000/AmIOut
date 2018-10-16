@@ -31,5 +31,5 @@ public interface DOEFieldOrder
 
     public DateFormat getDateFormat();
 
-    public DateFormat getTimeFormat();
+    public DateFormat dateFormatForFileDetection();
 }
