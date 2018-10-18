@@ -1,8 +1,6 @@
 package edu.vt.cs5560.amiout.data.DOE;
 
-import edu.vt.cs5560.amiout.data.DOE.order.DOE2002FieldOrder;
-import edu.vt.cs5560.amiout.data.DOE.order.DOE2018FieldOrder;
-import edu.vt.cs5560.amiout.data.DOE.order.DOEFieldOrder;
+import edu.vt.cs5560.amiout.data.DOE.order.*;
 import edu.vt.cs5560.amiout.domain.NERCRegion;
 import edu.vt.cs5560.amiout.domain.OutageSample;
 import edu.vt.cs5560.amiout.services.datasource.DOEOutageFileScraper;
@@ -179,12 +177,21 @@ public class DOEOutageParser
             Date date = tryToParseDate(fieldOrder, val);
             if (date != null && dateHasYear(date, 118, 117, 116, 115))
                 return fieldOrder;
+            else if (date != null && dateHasYear(date, 115, 114, 113, 112, 111))
+                return new DOE2012FieldOrder();
 
             // Try 2002
             fieldOrder = new DOE2002FieldOrder();
             date = tryToParseDate(fieldOrder, val);
             if (date != null && dateHasYear(date, 102, 103, 104, 105, 106, 107, 108, 109, 110))
                 return fieldOrder;
+            else if (date != null && dateHasYear(date, 111, 112, 113, 114))
+                return new DOE2011FieldOrder();
+            else{
+                Date d = tryToParseDate(new DOE2015FieldOrder(), val);
+                if (d != null && dateHasYear(d,  115))
+                    return new DOE2015FieldOrder();
+            }
         }
         System.err.print("couldn't find parser!");
         return null;
