@@ -20,6 +20,16 @@
             crossorigin=""></script>
 
     <!-- Custom Nonsense -->
+    <!--/*
+        This sets a javascript variable that contains the context root. By using this variable, we can avoid
+        having to harccode the context root all over the frontend.
+    */-->
+    <script th:inline="javascript">
+                var contextRoot = /*[[@{/}]]*/ '';
+                if (contextRoot == "/")
+                    contentRoot = "";
+    </script>
+    <script th:src="@{/js/leaflets_map.js}"></script>
     <script th:src="@{/js/index.js}"></script>
     <link th:href="@{/css/style.css}" rel="stylesheet" />
 
