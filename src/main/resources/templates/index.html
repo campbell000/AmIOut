@@ -28,13 +28,23 @@
                 var contextRoot = /*[[@{/}]]*/ '';
                 if (contextRoot == "/")
                     contentRoot = "";
+
+                var GLOBALS = {};
+                var stateIdMappingJson = /*[[${@referenceData.getStateIdNameMapping()}]]*/ 'default'
+                GLOBALS.stateIdNameMap = JSON.parse(stateIdMappingJson);
     </script>
     <script th:src="@{/js/leaflets_map.js}"></script>
     <script th:src="@{/js/index.js}"></script>
     <link th:href="@{/css/style.css}" rel="stylesheet" />
 
 </head>
-<body>
+<body class="amiout-container">
+    <div id="menu" class="amiout-menu">
+        <div id="menuPopButton" class="menuPopButton" data-toggle="tooltip" data-placement="right" title="Collapse Menu">
+            <div class="triangle"></div>
+        </div>
+        <div class="menuTitle">Am I Out?</div>
+    </div>
     <div id="mapid"></div>
 </body>
 </html>

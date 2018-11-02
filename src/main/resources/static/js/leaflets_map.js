@@ -36,8 +36,29 @@ function onEachFeature(feature, layer) {
     });
 }
 
+// Zooms into a partition when clicked
 function zoomToFeature(e) {
     LEAFLETS_VARS.map.fitBounds(e.target.getBounds());
+}
+
+// Adds the info popup to the screen
+function addInfoPopup()
+{
+    LEAFLETS_VARS.infoPanel.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+    // method that we will use to update the control based on feature properties passed
+    LEAFLETS_VARS.infoPanel.update = function (props) {
+        this._div.innerHTML = '<h4>US Outage Events</h4>' +  (props ?
+            '<b>' + props.name + ', '+GLOBALS.stateIdNameMap[props.STATE]+'</b>'
+            : 'Hover over a state');
+    };
+
+    LEAFLETS_VARS.infoPanel.addTo(LEAFLETS_VARS.map);
+
 }
 
 function addPartitionGeoJsonToMap(geoJsonResp)
