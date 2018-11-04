@@ -27,7 +27,7 @@ function initmap() {
 
 	// start the map in good old AMERICA USA
 	LEAFLETS_VARS.map.setView([37.8, -96], 5);
-	getGeoJsonCounties();
+	getGeoJsonStates();
 	addInfoPopup();
 
 	// Remove leaflets attribution (sorry leaflets team);
@@ -45,6 +45,26 @@ $(document).ready(function() {
     $("#menuPopButton").click(function(){
         toggleMenu();
     })
+
+    // Init listener for select box
+    $("#partitionSelect").on('change', function(){
+        var selectOption = this.value;
+        if (selectOption == "states")
+        {
+            getGeoJsonStates();
+        }
+        else if (selectOption == "counties")
+        {
+            getGeoJsonCounties();
+        }
+    });
+
+    $( document ).ajaxSend(function() {
+       $("#snackbar").show();
+    });
+    $( document ).ajaxComplete(function() {
+       $("#snackbar").hide();
+    });
 });
 
 function toggleMenu()

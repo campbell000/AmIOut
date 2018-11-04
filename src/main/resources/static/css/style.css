@@ -40,16 +40,17 @@ div.leaflet-control-attribution {
 .amiout-menu {
     width: 350px;
     height: 100%;
-    background-color: rgb(245, 245, 245);
+    background-color: rgb(250, 250, 250);
     position: absolute;
     z-index: 9999;
     left: 0px;
+    border-right: 1px solid silver;
 }
 
 .menuTitle {
     width: 100%;
     text-align: center;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 .menuPopButton
@@ -71,4 +72,24 @@ div.leaflet-control-attribution {
     width: 0px;
     height: 0px;
     margin: 10px;
+}
+
+.queryParamContainer {
+    padding: 10px;
+}
+
+ /* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+    visibility: visible; /* Hidden by default. Visible on click */
+    min-width: 150px; /* Set a default minimum width */
+    margin-left: -75px; /* Divide value of min-width by 2 */
+    background-color: #333; /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 10px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 1000; /* Add a z-index if needed */
+    left: 50%; /* Center the snackbar */
+    top: 30px; /* 30px from the bottom */
 }

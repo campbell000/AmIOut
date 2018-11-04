@@ -63,6 +63,10 @@ function addInfoPopup()
 
 function addPartitionGeoJsonToMap(geoJsonResp)
 {
+    if (LEAFLETS_VARS.geoJsonLayer != null)
+    {
+        LEAFLETS_VARS.map.removeLayer(LEAFLETS_VARS.geoJsonLayer)
+    }
 	LEAFLETS_VARS.geoJsonLayer =
 	    L.geoJson(geoJsonResp, {style: doPartitionOutlineStyle, onEachFeature: onEachFeature}).addTo(LEAFLETS_VARS.map);
 }
