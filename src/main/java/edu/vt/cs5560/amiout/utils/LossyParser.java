@@ -1,6 +1,6 @@
 package edu.vt.cs5560.amiout.utils;
 
-import edu.vt.cs5560.amiout.domain.NERCRegion;
+import edu.vt.cs5560.amiout.domain.parsers.NERCRegion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;

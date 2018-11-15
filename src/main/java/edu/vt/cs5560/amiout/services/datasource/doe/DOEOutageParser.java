@@ -1,8 +1,7 @@
 package edu.vt.cs5560.amiout.services.datasource.doe;
 
 import edu.vt.cs5560.amiout.data.DOE.order.*;
-import edu.vt.cs5560.amiout.domain.OutageSample;
-import edu.vt.cs5560.amiout.services.datasource.doe.DOEOutageStaticLoader;
+import edu.vt.cs5560.amiout.domain.parsers.OutageSample;
 import edu.vt.cs5560.amiout.services.datasource.DataFileSource;
 import edu.vt.cs5560.amiout.utils.LossyParser;
 import edu.vt.cs5560.amiout.utils.csv.POJO2CSV;
