@@ -1,11 +1,15 @@
 package edu.vt.cs5560.amiout.domain.ui;
 
+import edu.vt.cs5560.amiout.services.datasource.climate.ClimateSample;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AggregateQueryResponse
 {
     private Map<String, Integer> partitionIdToCountMap;
+    private List<ClimateSample> climateSamples;
     private String partitionType;
 
     public String getPartitionType() {
@@ -27,5 +31,13 @@ public class AggregateQueryResponse
 
     public void setPartitionIdToCountMap(Map<String, Integer> partitionIdToCountMap) {
         this.partitionIdToCountMap = partitionIdToCountMap;
+    }
+
+    public List<ClimateSample> getClimateSamples() {
+        return climateSamples;
+    }
+
+    public void setClimateSamples(List<ClimateSample> climateSamples) {
+        this.climateSamples = climateSamples;
     }
 }

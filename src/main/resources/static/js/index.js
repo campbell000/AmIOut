@@ -20,6 +20,7 @@ var LEAFLETS_VARS = {
     map: map,
     rawGeoJson: rawGeoJson,
     geoJsonLayer: geoJson,
+    weatherMarkers: [],
     infoPanel: infoPanel,
     currentQueryPartition: -1,
     aggregateQueryHasBeenRun: false,
@@ -153,8 +154,9 @@ function submitQuery() {
     query.startDate = $("#queryStartDate").val();
     query.endDate = $("#queryEndDate").val();
     query.partitioning = $("#partitionSelect").val();
-    query.showTweets = $("#showOutageCheck").val();
-    query.showOutages =  $("#showTwitterCheck").val();
+    query.showTweets = $("#showOutageCheck").prop("checked")
+    query.showOutages =  $("#showTwitterCheck").prop("checked")
+    query.showWeather = $("#showWeatherCheck").prop("checked")
     var url = contextRoot+"aggregateQuery/";
 
     $.post({
@@ -187,6 +189,37 @@ function handleAggregateResponse(response)
         layerProps.aggregateCount = response.partitionIdToCountMap[id];
         layer.setStyle(doPartitionOutlineStyle(layer.feature));
     }
+
+    if (response.climateSamples)
+    {
+        for (var i in response.climateSamples) {
+            var climateSample = response.climateSamples[i];
+            var icon = createWeatherMarker(climateSample);
+            var marker = L.marker([climateSample.lat, climateSample.lon], {icon: icon}).addTo(LEAFLETS_VARS.map);
+            LEAFLETS_VARS.weatherMarkers.push(marker);
+        }
+    }
+}
+
+function createWeatherMarker(dataSample)
+{
+    var rain = Math.floor(dataSample.precipitationInMM);
+    var temp = Math.floor(dataSample.avgTempCelsium);
+    var htmlElement = $("<div>");
+    var rainEl = $("<div>");
+    rainEl.html(temp+" <i class='fas fa-tint'></i>");
+    rainEl.addClass("weatherMarkerRow");
+    var tempEl = $("<div>");
+    tempEl.html(rain+" <i class='fas fa-thermometer-half'></i>");
+    tempEl.addClass("weatherMarkerRow");
+    htmlElement.append(tempEl);
+    htmlElement.append(rainEl);
+
+    var marker = L.divIcon({
+        iconSize: new L.Point(50,50),
+        html: htmlElement.html()
+    });
+    return marker;
 }
 
 function getPartitonID(props)

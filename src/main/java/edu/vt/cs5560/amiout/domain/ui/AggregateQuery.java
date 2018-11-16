@@ -7,6 +7,7 @@ public class AggregateQuery
     private String partitioning;
     private boolean showOutages;
     private boolean showTweets;
+    private boolean showWeather;
 
     public String getStartDate() {
         return startDate;
@@ -46,5 +47,13 @@ public class AggregateQuery
 
     public void setShowTweets(boolean showTweets) {
         this.showTweets = showTweets;
+    }
+
+    public boolean isShowWeather() {
+        return showWeather;
+    }
+
+    public void setShowWeather(boolean showWeather) {
+        this.showWeather = showWeather;
     }
 }
