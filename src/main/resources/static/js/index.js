@@ -24,6 +24,7 @@ var LEAFLETS_VARS = {
     infoPanel: infoPanel,
     currentQueryPartition: -1,
     aggregateQueryHasBeenRun: false,
+    timeLapseResults: [],
     aggregateTotalCount: 0
 };
 
@@ -86,6 +87,20 @@ $(document).ready(function() {
     });
     $( document ).ajaxComplete(function() {
        $("#snackbar").hide();
+    });
+
+    $('#intervalLength').on('input change', function () {
+        $('#sliderValue').text($(this).val());
+    });
+
+    $("#timeLapseMode").on('change', function(){
+        var checked = $(this).prop("checked");
+        if (checked) {
+            $("#timeLapseContainer").show();
+        }
+        else {
+            $("#timeLapseContainer").hide();
+        }
     });
 });
 
@@ -154,20 +169,84 @@ function submitQuery() {
     query.startDate = $("#queryStartDate").val();
     query.endDate = $("#queryEndDate").val();
     query.partitioning = $("#partitionSelect").val();
-    query.showTweets = $("#showOutageCheck").prop("checked")
-    query.showOutages =  $("#showTwitterCheck").prop("checked")
-    query.showWeather = $("#showWeatherCheck").prop("checked")
-    var url = contextRoot+"aggregateQuery/";
+    query.showTweets = $("#showOutageCheck").prop("checked");
+    query.showOutages =  $("#showTwitterCheck").prop("checked");
+    query.showWeather = $("#showWeatherCheck").prop("checked");
+    query.timeLapse = $("#timeLapseMode").prop("checked");
+    query.timeLapseIntervalLengthSeconds = $("#intervalSpeed").val();
+    query.numSteps = $("#intervalLength").val();
+
+    var url = !query.timeLapse ? contextRoot+"aggregateQuery/" : contextRoot+"timeLapse/";
 
     $.post({
         url: url,
         contentType: "application/json",
         data: JSON.stringify(query),
         success: function(results){
-            handleAggregateResponse(results);
-            LEAFLETS_VARS.aggregateQueryHasBeenRun = true;
+            if (!query.timeLapse)
+            {
+                handleAggregateResponse(results);
+                LEAFLETS_VARS.aggregateQueryHasBeenRun = true;
+            }
+            else
+            {
+                handleTimeLapseResponse(results);
+                LEAFLETS_VARS.aggregateQueryHasBeenRun = true;
+            }
         }
     });
+}
+
+function handleTimeLapseResponse(results)
+{
+    // Store the results, and then proceed to display each step.
+    LEAFLETS_VARS.timeLapseResults = results;
+
+    renderAllTimelapseSteps(results.timeLapseSteps);
+}
+
+function renderAllTimelapseSteps(timeLapseResults)
+{
+    // Cleat any existing buttons in this container
+    $("#timeLapseButtonContainer").empty();
+    // Add a "play all" button
+    var button = $("<button>");
+    button.addClass("btn");
+    button.addClass("btn-secondary");
+    button.html("Play All Steps");
+    $("#timeLapseButtonContainer").append(button);
+    button.click(function(){
+       renderAllTimelapseSteps(timeLapseResults);
+    });
+
+    for (var i=0; i <  timeLapseResults.length; i++)
+    {
+        var timeLapseResult = timeLapseResults[i];
+        doTimeLapseDisplay(timeLapseResult, i);
+    }
+}
+
+function doTimeLapseDisplay(timeLapseResult, i)
+{
+    // Build the time lapse button container
+    var button = $("<button>");
+    button.addClass("btn");
+    button.addClass("btn-secondary");
+    button.addClass("timeLapseButton");
+    button.html(" "+i+" ");
+    button.click(function(){
+        $(".timeLapseButton").removeClass("timeLapseActive");
+       handleAggregateResponse(timeLapseResult);
+    });
+    $("#timeLapseButtonContainer").append(button);
+
+    var timeToWait = ($("#intervalSpeed").val() * 1000) * i;
+    setTimeout(function(){
+        handleAggregateResponse(timeLapseResult);
+        $(".timeLapseButton").removeClass("timeLapseActive");
+        var currentButton = $(".timeLapseButton:nth-child("+(i+2)+")");
+        currentButton.addClass('timeLapseActive');
+    }, timeToWait);
 }
 
 function handleAggregateResponse(response)
@@ -192,6 +271,11 @@ function handleAggregateResponse(response)
 
     if (response.climateSamples)
     {
+        for (var i in LEAFLETS_VARS.weatherMarkers)
+        {
+            LEAFLETS_VARS.map.removeLayer(LEAFLETS_VARS.weatherMarkers[i]);
+        }
+
         for (var i in response.climateSamples) {
             var climateSample = response.climateSamples[i];
             var icon = createWeatherMarker(climateSample);
@@ -206,6 +290,7 @@ function createWeatherMarker(dataSample)
     var rain = Math.floor(dataSample.precipitationInMM);
     var temp = Math.floor(dataSample.avgTempCelsium);
     var htmlElement = $("<div>");
+    htmlElement.addClass("weatherMarker");
     var rainEl = $("<div>");
     rainEl.html(temp+" <i class='fas fa-tint'></i>");
     rainEl.addClass("weatherMarkerRow");
@@ -216,7 +301,7 @@ function createWeatherMarker(dataSample)
     htmlElement.append(rainEl);
 
     var marker = L.divIcon({
-        iconSize: new L.Point(50,50),
+        iconSize: new L.Point(45,55),
         html: htmlElement.html()
     });
     return marker;

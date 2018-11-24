@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.Random;
 @Controller
 public class IndexController
 {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
     @RequestMapping("/")
     public String loadIndexPage()
     {
@@ -25,22 +29,49 @@ public class IndexController
     }
 
     @RequestMapping("/aggregateQuery")
-    public @ResponseBody AggregateQueryResponse aggregateQuery(@RequestBody AggregateQuery aggregateQuery)
-    {
+    public @ResponseBody AggregateQueryResponse aggregateQuery(@RequestBody AggregateQuery aggregateQuery) throws ParseException {
+        return doAggregateQuery(aggregateQuery);
+    }
+
+    @RequestMapping("/timeLapse")
+    public @ResponseBody TimeLapseResponse timeLapseQuery(@RequestBody AggregateQuery aggregateQuery) throws ParseException {
+        TimeLapseResponse response = new TimeLapseResponse();
+        Date startDate = this.format.parse(aggregateQuery.getStartDate());
+        Date endDate = this.format.parse(aggregateQuery.getEndDate());
+
+        long stepLength = Math.abs(startDate.getTime() - endDate.getTime()) / new Long(aggregateQuery.getNumSteps());
+        Date currStatDate = startDate;
+        for (int i = 0; i < aggregateQuery.getNumSteps(); i++)
+        {
+            double currEndDateTime = currStatDate.getTime()+stepLength;
+            Date currEndDate = new Date((long)currEndDateTime);
+
+            // TODO: do query for this particular date range
+            AggregateQuery stepAggregateQuery = new AggregateQuery(aggregateQuery, format.format(currStatDate),
+                    format.format(currEndDate));
+            response.getTimeLapseSteps().add(doAggregateQuery(stepAggregateQuery));
+            currStatDate = currEndDate;
+        }
+        return response;
+    }
+
+    public AggregateQueryResponse doAggregateQuery(AggregateQuery query) throws ParseException {
         AggregateQueryResponse resp = new AggregateQueryResponse();
-        resp.setPartitionType(aggregateQuery.getPartitioning());
-        resp.getPartitionIdToCountMap().put("4", 50);
-        resp.getPartitionIdToCountMap().put("1", 100);
-        resp.getPartitionIdToCountMap().put("2", 150);
-        resp.getPartitionIdToCountMap().put("3", 200);
+        resp.setPartitionType(query.getPartitioning());
+
+
+        resp.getPartitionIdToCountMap().put("4", new Random().nextInt(100));
+        resp.getPartitionIdToCountMap().put("1", new Random().nextInt(100));
+        resp.getPartitionIdToCountMap().put("2", new Random().nextInt(100));
+        resp.getPartitionIdToCountMap().put("3", new Random().nextInt(100));
 
         /**
          * The idea here is to use the DB and its spatial indexing to gather averages
-         * for all the different data points accross the query date, and grouping together
+         * for all the different data points across the query date, and grouping together
          * weather samples that are close to each other. We are ASSUMING that this is going to be done
          * and the data mocked below represents the results.
          */
-        if (aggregateQuery.isShowWeather())
+        if (query.isShowWeather())
         {
             List<ClimateSample> samples = new LinkedList<>();
             for (int i = 0; i < 50; i++)
@@ -54,6 +85,8 @@ public class IndexController
             }
             resp.setClimateSamples(samples);
         }
+        resp.setStartDate(format.parse(query.getStartDate()));
+        resp.setEndDate(format.parse(query.getEndDate()));
 
         return resp;
     }

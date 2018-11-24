@@ -105,3 +105,34 @@ div.leaflet-control-attribution {
     margin-right: 8px;
     opacity: 0.7;
 }
+
+.weatherMarkerRow {
+    text-align: center;
+    font-size: 18px;
+    opacity: 1.0;
+}
+
+.weatherMarker {
+    opacity: 0.5;
+}
+
+.hidden {
+    display: none;
+}
+
+.timeLapseControl {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    width: 100%; /* Need a specific value to work */
+    z-index: 1000;
+    text-align: center;
+}
+
+.timeLapseActive {
+    box-shadow: 0 0 0 .2rem rgba(108,117,125,.5);
+    color: #fff;
+    background-color: #545b62;
+    border-color: #4e555b;
+}
