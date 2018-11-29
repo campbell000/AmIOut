@@ -28,6 +28,14 @@ var LEAFLETS_VARS = {
     aggregateTotalCount: 0
 };
 
+function initDefaultValues() {
+    $("#regions").val("regions");
+    $("#showOutageCheck").prop("checked", "");
+    $("#showTwitterCheck").prop("checked", "");
+    $("#showWeatherCheck").prop("checked", "");
+    $("#timeLapseMode").prop("checked", "");
+}
+
 function initmap() {
 	// set up the map
 	LEAFLETS_VARS.map = new L.Map('mapid', {zoomControl: false});
@@ -102,6 +110,8 @@ $(document).ready(function() {
             $("#timeLapseContainer").hide();
         }
     });
+
+    initDefaultValues();
 });
 
 function toggleMenu()
