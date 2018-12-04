@@ -57,9 +57,13 @@ function plotIndividualEvents(e)
 {
     var partitionID = getPartitonID(e.feature.properties);
     var partitioning = $("#partitionSelect").val();
+    var startDate = $("#queryStartDate").val();
+    var endDate = $("#queryEndDate").val();
     var query = {
         partitionID: partitionID,
-        partitioning: partitioning
+        partitioning: partitioning,
+        startDate: startDate,
+        endDate: endDate
     };
     var url = contextRoot+"partitionQuery";
 
@@ -86,12 +90,19 @@ function displayPoints(results) {
     }
 }
 function generatePopupContent(dataPoint) {
-    var keys = ["areaAffected", "disturbanceType", "dateTimeOcurred", "energyLossInMegaWatts", "numCustomersAffected", "restorationDateTime"];
+    var keys = ["disturbanceType", "dateRange", "energyLossInMegaWatts", "numCustomersAffected", "nercRegion"];
+    var disp = {
+            disturbanceType: "Outage Type",
+            dateRange: "Outage Duration",
+            energyLossInMegaWatts: "Energy Loss",
+            numCustomersAffected: "Num Customers Affected",
+            nercRegion: "NERC Region"
+    }
     var content = $("<div>");
     for (var i in keys) {
         var key = keys[i];
         var value = $("<div>");
-        value.html(key+": "+dataPoint[key]);
+        value.html(disp[key]+": "+dataPoint[key]);
         content.append(value);
     }
     return content.html();
@@ -157,6 +168,7 @@ function getColor(count) {
            d > 0.375 ?  colorMap[0.375] :
            d > 0.25  ?  colorMap[0.25] :
            d > 0.125 ?  colorMap[0.125] :
+           d > 0     ?  colorMap[0.1] :
                         colorMap[0];
 }
 
@@ -168,6 +180,7 @@ var colorMap = {
     0.375 :  '#FD8D3C',
     0.25  :  '#FEB24C',
     0.125 :  '#FED976',
+    0.1   :  '#F3F906',
     0: '#ACD1E9'
 };
 
@@ -182,8 +195,8 @@ function initLegend(map)
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            legendStrings = ["12.5%", "12.5%", "25%", "37.5%", "50%", "75%", "87.5%"],
-            legendValues = [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1],
+            legendStrings = ["0%", "0%", "12.5%", "12.5%", "25%", "37.5%", "50%", "75%", "87.5%"],
+            legendValues = [0, 0.1, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1],
             labels = [];
 
         div.innerHTML += "<b>Total Events: <span id='totalCount'>"+LEAFLETS_VARS.aggregateTotalCount+"</span></b><br/>";
@@ -197,7 +210,7 @@ function initLegend(map)
             }
             else {
                 div.innerHTML += '<i style="background:'+getColorForRatio(legendValues[i]) + '"></i> ' +
-                                '     <&nbsp;&nbsp;'+legendStrings[i] +'<br/>';
+                                '     =&nbsp;&nbsp;'+legendStrings[i] +'<br/>';
             }
         }
 

@@ -18,7 +18,8 @@ public class DOEOutageStaticLoader implements DataFileSource
         final String classPath = System.getProperty("java.class.path", ".");
         final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
         for(final String element : classPathElements){
-            if (element.contains("AmIOut\\out\\production\\resources"))
+            if (element.contains("AmIOut/out/production/resources") ||
+                    element.contains("AmIOut/build/resources"))
             {
                 File resourceDir = new File(element);
                 for (File resourceFile : resourceDir.listFiles())

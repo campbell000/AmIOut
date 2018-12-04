@@ -3,24 +3,27 @@ package edu.vt.cs5560.amiout.controllers;
 import edu.vt.cs5560.amiout.domain.parsers.GeoPoint;
 import edu.vt.cs5560.amiout.domain.parsers.OutageSample;
 import edu.vt.cs5560.amiout.domain.ui.*;
+import edu.vt.cs5560.amiout.services.DBService;
 import edu.vt.cs5560.amiout.services.datasource.climate.ClimateSample;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Controller
 public class IndexController
 {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+    @Autowired
+    DBService dbService;
 
     @RequestMapping("/")
     public String loadIndexPage()
@@ -29,12 +32,12 @@ public class IndexController
     }
 
     @RequestMapping("/aggregateQuery")
-    public @ResponseBody AggregateQueryResponse aggregateQuery(@RequestBody AggregateQuery aggregateQuery) throws ParseException {
+    public @ResponseBody AggregateQueryResponse aggregateQuery(@RequestBody AggregateQuery aggregateQuery) throws ParseException, SQLException {
         return doAggregateQuery(aggregateQuery);
     }
 
     @RequestMapping("/timeLapse")
-    public @ResponseBody TimeLapseResponse timeLapseQuery(@RequestBody AggregateQuery aggregateQuery) throws ParseException {
+    public @ResponseBody TimeLapseResponse timeLapseQuery(@RequestBody AggregateQuery aggregateQuery) throws ParseException, SQLException {
         TimeLapseResponse response = new TimeLapseResponse();
         Date startDate = this.format.parse(aggregateQuery.getStartDate());
         Date endDate = this.format.parse(aggregateQuery.getEndDate());
@@ -55,69 +58,21 @@ public class IndexController
         return response;
     }
 
-    public AggregateQueryResponse doAggregateQuery(AggregateQuery query) throws ParseException {
-        AggregateQueryResponse resp = new AggregateQueryResponse();
-        resp.setPartitionType(query.getPartitioning());
-
-
-        resp.getPartitionIdToCountMap().put("4", new Random().nextInt(100));
-        resp.getPartitionIdToCountMap().put("1", new Random().nextInt(100));
-        resp.getPartitionIdToCountMap().put("2", new Random().nextInt(100));
-        resp.getPartitionIdToCountMap().put("3", new Random().nextInt(100));
-
-        /**
-         * The idea here is to use the DB and its spatial indexing to gather averages
-         * for all the different data points across the query date, and grouping together
-         * weather samples that are close to each other. We are ASSUMING that this is going to be done
-         * and the data mocked below represents the results.
-         */
-        if (query.isShowWeather())
-        {
-            List<ClimateSample> samples = new LinkedList<>();
-            for (int i = 0; i < 50; i++)
-            {
-                ClimateSample s = new ClimateSample();
-                s.setLat(dummyWeatherCoords[i][0]);
-                s.setLon(dummyWeatherCoords[i][1]);
-                s.setPrecipitationInMM(new Random().nextDouble() * 50);
-                s.setAvgTempCelsium(new Random().nextDouble() * 100);
-                samples.add(s);
-            }
-            resp.setClimateSamples(samples);
-        }
-        resp.setStartDate(format.parse(query.getStartDate()));
-        resp.setEndDate(format.parse(query.getEndDate()));
-
-        return resp;
+    public AggregateQueryResponse doAggregateQuery(AggregateQuery query) throws SQLException {
+        return dbService.doAggregateQuery(query);
     }
 
     @RequestMapping("/partitionQuery")
-    public @ResponseBody PartitionQueryResponse aggregateQuery(@RequestBody PartitionQuery partitionQuery)
-    {
+    public @ResponseBody PartitionQueryResponse aggregateQuery(@RequestBody PartitionQuery partitionQuery) throws SQLException {
         PartitionQueryResponse resp = new PartitionQueryResponse();
-        resp.setDataPoints(generateRandomPoints());
+        resp.setDataPoints(getPointsInPartition(partitionQuery.getPartitioning(), partitionQuery.getPartitionID(),
+                partitionQuery.getStartDate(), partitionQuery.getEndDate()));
         return resp;
     }
 
-    private List<UIDataPoint> generateRandomPoints()
-    {
+    private Collection<UIDataPoint> getPointsInPartition(String partitionType, String partitionID, String startDate, String endDate) throws SQLException {
         List<UIDataPoint> points = new LinkedList<>();
-        for (int i = 0; i < 50; i++)
-        {
-            double randomLat = 39 + (44 - 39) * new Random().nextDouble();
-            double randomLon = -101 + (-87 - -101) * new Random().nextDouble();
-
-            OutageSample sample = new OutageSample();
-            sample.setRestorationDateTime(new Date());
-            sample.setAreaAffected("Falls Church, Virginia");
-            sample.setDateTimeOcurred(new Date());
-            sample.setDisturbanceType("Weather");
-            sample.setEnergyLossInMegaWatts(50000);
-            sample.setNumCustomersAffected(50000);
-            sample.setCenterPoint(new GeoPoint(randomLat, randomLon));
-            points.add(new UIDataPoint(UIDataType.OUTAGE, sample));
-        }
-        return points;
+        return dbService.getOutagesInPartition(partitionType, partitionID, startDate, endDate);
     }
 
     double[][] dummyWeatherCoords = {{32.806671, -86.79113},

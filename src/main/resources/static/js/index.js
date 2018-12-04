@@ -136,7 +136,7 @@ function getGeoJson(partitionType)
     var fileName;
     switch (partitionType) {
         case STATES:
-            fileName = "states_small.json";
+            fileName = "states.json";
             break;
         case COUNTIES:
             fileName = "counties.json";
@@ -217,6 +217,16 @@ function handleTimeLapseResponse(results)
 
 function renderAllTimelapseSteps(timeLapseResults)
 {
+    // Get total across ALL steps
+    var total = 0;
+    for (i in timeLapseResults)
+    {
+        for (j in timeLapseResults[i].partitionIdToCountMap)
+        {
+            total += timeLapseResults[i].partitionIdToCountMap[j];
+        }
+    }
+
     // Cleat any existing buttons in this container
     $("#timeLapseButtonContainer").empty();
     // Add a "play all" button
@@ -232,11 +242,11 @@ function renderAllTimelapseSteps(timeLapseResults)
     for (var i=0; i <  timeLapseResults.length; i++)
     {
         var timeLapseResult = timeLapseResults[i];
-        doTimeLapseDisplay(timeLapseResult, i);
+        doTimeLapseDisplay(timeLapseResult, i, total);
     }
 }
 
-function doTimeLapseDisplay(timeLapseResult, i)
+function doTimeLapseDisplay(timeLapseResult, i, total)
 {
     // Build the time lapse button container
     var button = $("<button>");
@@ -246,27 +256,31 @@ function doTimeLapseDisplay(timeLapseResult, i)
     button.html(" "+i+" ");
     button.click(function(){
         $(".timeLapseButton").removeClass("timeLapseActive");
-       handleAggregateResponse(timeLapseResult);
+       handleAggregateResponse(timeLapseResult, total);
     });
     $("#timeLapseButtonContainer").append(button);
 
     var timeToWait = ($("#intervalSpeed").val() * 1000) * i;
     setTimeout(function(){
-        handleAggregateResponse(timeLapseResult);
+        handleAggregateResponse(timeLapseResult, total);
         $(".timeLapseButton").removeClass("timeLapseActive");
         var currentButton = $(".timeLapseButton:nth-child("+(i+2)+")");
         currentButton.addClass('timeLapseActive');
     }, timeToWait);
 }
 
-function handleAggregateResponse(response)
+function handleAggregateResponse(response, total)
 {
     // get total, update colors based on ratios of total (5/5, 4/5, 3/5, etc)
-    var total = 0;
-    for (key in response.partitionIdToCountMap)
+    if (total == null)
     {
-        total += response.partitionIdToCountMap[key];
+        var total = 0;
+        for (key in response.partitionIdToCountMap)
+        {
+            total += response.partitionIdToCountMap[key];
+        }
     }
+
     LEAFLETS_VARS.aggregateTotalCount = total;
     $("#totalCount").html(total);
 
@@ -302,13 +316,13 @@ function createWeatherMarker(dataSample)
     var htmlElement = $("<div>");
     htmlElement.addClass("weatherMarker");
     var rainEl = $("<div>");
-    rainEl.html(temp+" <i class='fas fa-tint'></i>");
+    rainEl.html(temp+" <i class='fas fa-thermometer-half'></i>");
     rainEl.addClass("weatherMarkerRow");
     var tempEl = $("<div>");
-    tempEl.html(rain+" <i class='fas fa-thermometer-half'></i>");
+    tempEl.html(rain+" <i class='fas fa-tint'></i>");
     tempEl.addClass("weatherMarkerRow");
-    htmlElement.append(tempEl);
     htmlElement.append(rainEl);
+        htmlElement.append(tempEl);
 
     var marker = L.divIcon({
         iconSize: new L.Point(45,55),
@@ -319,6 +333,8 @@ function createWeatherMarker(dataSample)
 
 function getPartitonID(props)
 {
+    if (props.STATE)
+        return props.STATE;
     if (props.id)
         return props.id;
     else if (props.GEO_ID)

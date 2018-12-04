@@ -1,16 +1,17 @@
 package edu.vt.cs5560.amiout.domain.ui;
 
+import java.util.Collection;
 import java.util.List;
 
 public class PartitionQueryResponse
 {
-    private List<UIDataPoint> dataPoints;
+    private Collection<UIDataPoint> dataPoints;
 
-    public List<UIDataPoint> getDataPoints() {
+    public Collection<UIDataPoint> getDataPoints() {
         return dataPoints;
     }
 
-    public void setDataPoints(List<UIDataPoint> dataPoints) {
+    public void setDataPoints(Collection<UIDataPoint> dataPoints) {
         this.dataPoints = dataPoints;
     }
 }
