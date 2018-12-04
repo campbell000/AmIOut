@@ -6,7 +6,7 @@ The column headers are as follows:
 `Tweet ID | Tweet Permalink | Username | Text | Date`
 
 ### Filename
-The geolocation information is not included as it was blank for all tweets retrieded. Just create a Point on the location in the filename.
+The geolocation information is not included as it was blank for all tweets retrieved. Just create a Point on the location in the filename.
 
 The filename is laid out as city-state-dateFrom-to-dateTo.txt.
 
