@@ -1,6 +1,6 @@
 package edu.vt.cs5560.amiout.utils.csv;
 
-import edu.vt.cs5560.amiout.domain.OutageSample;
+import edu.vt.cs5560.amiout.domain.parsers.OutageSample;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvBeanWriter;
