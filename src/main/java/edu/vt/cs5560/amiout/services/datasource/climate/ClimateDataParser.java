@@ -57,7 +57,7 @@ public class ClimateDataParser
         }
 
         // Delete the unzipped files so that intelliJ doesn't have to keep copying them to the build directory
-        // whenever we run/build
+        // whenever we run/build.
         FileUtils.cleanDirectory(new File("src/main/resources/static-datasets/climate/unzippedFiles"));
     }
 
